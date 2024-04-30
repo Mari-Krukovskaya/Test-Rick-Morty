@@ -1,33 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './App.css';
+// import './App.css';
 import styled from 'styled-components';
 import rick_morty from './image/rick_morty.png';
 import Character from './Components/Character';
+import Filters from './Components/Filters';
 
 const Header = styled.header`
 position: relative;
 display: flex;
 justify-content: end;
 align-items: baseline;
-.search {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 2;
- }
- p {
-  font-size: 25px;
-  padding-right: 1rem;
- }
-
- span {
-  font-weight: bold;
-  -webkit-text-stroke: 1px white;
-  -webkit-text-fill-color: transparent;
- }
-
  .hero-image {
   position: absolute;
 
@@ -73,50 +56,115 @@ border-radius: 1rem;
 `;
 
 function App() {
-const [url, setUrl] = useState("https://rickandmortyapi.com/api/character/?name=");
-const [info, setInfo] = useState({});
-const [results, setResults] = useState([]);
-const [search, setSearch] = useState("");
+  const [url] = useState("https://rickandmortyapi.com/api/character/");
+  const [results, setResults] = useState([]);
+  const [searchName, setSearchName] = useState("");
+  const [searchSpecies, setSearchSpecies] = useState("");
+  const [searchType, setSearchType] = useState("");
+  const [filteredStatus, setFilteredStatus] = useState("all");
+  const [filteredGender, setFilteredGender] = useState("all");
+  const [isError, setIsError] = useState(false);
+  const [isNoResult, setIsNoResult] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  debugger
+
+  useEffect(() => {
+    const fetchData = async () => {
+        if (
+          searchName ||
+          searchSpecies ||
+          searchType ||
+          filteredGender ||
+          filteredStatus
+        ) {
+          setIsLoading(true);
+          const urlName = searchName !== '' ? `&name=${searchName.toLowerCase()}` : '';
+          const urlSpecies = searchSpecies !== '' ? `&species=${searchSpecies.toLowerCase()}` : '';
+          const urlType = searchType !== '' ? `&type=${searchType.toLowerCase()}` : '';
+          const urlStatus = filteredStatus && filteredStatus !== 'all' ? `&status=${filteredStatus}` : '';
+          const urlGender = filteredGender && filteredGender !== 'all' ? `&gender=${filteredGender}` : '';
+
+          const filteredString = `${urlName}${urlSpecies}${urlType}${urlStatus}${urlGender}`;
+
+          await axios.get(`${url}${filteredString}`)
+          .then((response) => {
+            console.log(response, 'respon')
+            if (response?.error !== "There is nothing here") {
+              setResults(response.data.results);
+            } else {
+              setIsNoResult(true);
+            }
+          })
+      .catch(() => {
+        setIsError(true);
+      }).finally(() => {
+        setIsLoading(false)
+      });
+    };
+  }
+    fetchData();
+  }, [searchName, searchSpecies, searchType, filteredStatus, filteredGender]);
 
 useEffect(() => {
-axios.get(`${url}${search}`)
-  .then((result) => {
-console.log(result);
-setInfo(result.data.info);
-setResults(result.data.results);
-  }).catch((error) => {
-    console.log(error);
-  })
-}, [search]);
+  if (!isError) {
+    if (
+      !results.length &&
+      (searchName ||
+        searchSpecies ||
+        searchType ||
+        filteredStatus ||
+        filteredGender)
+    ) {
+      setIsNoResult(true);
+    } else {
+      setIsNoResult(false);
+    }
+  }
 
-useEffect(() => {
-  console.log('results', results)
-},[url, info, results, search])
+},[results, searchName, searchSpecies, searchType, filteredGender, filteredStatus, isError])
 
-const changeSearch = (e) => {
-  setSearch(e.target.value);
-}
+  const handleSearchClick = (searchData) => {
+    setIsError(false);
+    setSearchName(searchData.searchName);
+    setSearchSpecies(searchData.searchSpecies);
+    setSearchType(searchData.searchType);
+    setFilteredStatus(searchData.filteredStatus);
+    setFilteredGender(searchData.filteredGender);
+
+  };
+
+  useEffect(() => {
+  }, [url, results, searchName, searchSpecies, searchType, filteredStatus, filteredGender, isError, isNoResult, isLoading]);
+
   return (
     <>
-    <Header>
-      <div className='search'>
-      <p><span>Search</span></p>
-      <input onChange={changeSearch} value={search} type="text" placeholder='search'/>
-      </div>
-      <div className="hero-image">
-      <h1>The Rick & Morty</h1>
-      <img src={rick_morty} alt='Rick and Morty' />
-      </div>
-    </Header>
-    <CardDiv>
-   <main>
-    <section className='characters'>
-      {results.map((result, index) => (
-       <Character key={index} result={result}/>
-    ))}
-    </section>
-    </main>
-    </CardDiv>
+      <Header>
+        <Filters handleSearchClick={handleSearchClick} />
+        <div className="hero-image">
+          <h1>The Rick & Morty</h1>
+          <img src={rick_morty} alt='Rick and Morty' />
+        </div>
+      </Header>
+      <CardDiv>
+        <main>
+          <section className="characters">
+            {results &&
+              results.map((item) => (
+                <Character
+                  key={item.id}
+                  image={item.image}
+                  gender={item.gender}
+                  name={item.name}
+                  location={item.location.name}
+                  origin={item.origin.name}
+                  species={item.species}
+                  status={item.status}
+                  type={item.type}
+                />
+              ))}
+          </section>
+        </main>
+      </CardDiv>
     </>
   );
 }

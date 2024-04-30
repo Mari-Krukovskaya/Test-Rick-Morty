@@ -1,13 +1,11 @@
 import { createGlobalStyle } from 'styled-components';
+import { normalize } from 'styled-normalize';
 
-const GlobalStyle = () => {
-   createGlobalStyle `
+export const GlobalStyle = createGlobalStyle `
+${normalize}
     *,
     *::before,
     *::after {
-        margin: 0px;
-        padding: 0px;
-        border: none;
         box-sizing: border-box;
     }
      body {
@@ -15,7 +13,4 @@ const GlobalStyle = () => {
         color: hsla(0,0%,0%,0.8);
     
     }
-    `
-};
-
-export default GlobalStyle;
+    `;
