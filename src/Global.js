@@ -11,6 +11,7 @@ ${normalize}
      body {
         font-family: -apple-system,'BlinkMacSystemFont','Segoe UI','Roboto','Helvetica','Arial',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';
         color: hsla(0,0%,0%,0.8);
+        background-color: #202329;
     
     }
     `;

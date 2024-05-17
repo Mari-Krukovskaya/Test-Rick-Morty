@@ -4,13 +4,10 @@ import axios from 'axios';
 import styled from 'styled-components';
 import rick_morty from './image/rick_morty.png';
 import Character from './Components/Character';
-import Filters from './Components/Filters';
+import Filters from './Components/Filters/Filters';
+import Pagination from './Components/Pagination/Pagination';
 
 const Header = styled.header`
-position: relative;
-display: flex;
-justify-content: end;
-align-items: baseline;
  .hero-image {
   position: absolute;
 
@@ -56,7 +53,7 @@ border-radius: 1rem;
 `;
 
 function App() {
-  const [url] = useState("https://rickandmortyapi.com/api/character/");
+  const [pageNumber, updateNumber] = useState(1);
   const [results, setResults] = useState([]);
   const [searchName, setSearchName] = useState("");
   const [searchSpecies, setSearchSpecies] = useState("");
@@ -66,7 +63,7 @@ function App() {
   const [isError, setIsError] = useState(false);
   const [isNoResult, setIsNoResult] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  debugger
+  const [info, setInfo] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,26 +81,26 @@ function App() {
           const urlStatus = filteredStatus && filteredStatus !== 'all' ? `&status=${filteredStatus}` : '';
           const urlGender = filteredGender && filteredGender !== 'all' ? `&gender=${filteredGender}` : '';
 
-          const filteredString = `${urlName}${urlSpecies}${urlType}${urlStatus}${urlGender}`;
+          const filteredString = `https://rickandmortyapi.com/api/character/?page=${pageNumber}${urlName}${urlSpecies}${urlType}${urlStatus}${urlGender}`;
 
-          await axios.get(`${url}${filteredString}`)
-          .then((response) => {
-            console.log(response, 'respon')
-            if (response?.error !== "There is nothing here") {
+          try {
+          const response = await axios.get(`${filteredString}`);
+          if (response.data) {
               setResults(response.data.results);
+              setInfo(response.data.info);
             } else {
               setIsNoResult(true);
             }
-          })
-      .catch(() => {
+          
+          } catch (error) {
         setIsError(true);
-      }).finally(() => {
+      } finally {
         setIsLoading(false)
-      });
-    };
-  }
+      }
+    }
+  };
     fetchData();
-  }, [searchName, searchSpecies, searchType, filteredStatus, filteredGender]);
+  }, [searchName, searchSpecies, searchType, filteredStatus, filteredGender, pageNumber]);
 
 useEffect(() => {
   if (!isError) {
@@ -134,7 +131,7 @@ useEffect(() => {
   };
 
   useEffect(() => {
-  }, [url, results, searchName, searchSpecies, searchType, filteredStatus, filteredGender, isError, isNoResult, isLoading]);
+  }, [results, searchName, searchSpecies, searchType, filteredStatus, filteredGender, isError, isNoResult, isLoading]);
 
   return (
     <>
@@ -164,6 +161,11 @@ useEffect(() => {
               ))}
           </section>
         </main>
+        <Pagination 
+        info={info}
+        pageNumber={pageNumber}
+        updateNumber={updateNumber}
+        />
       </CardDiv>
     </>
   );

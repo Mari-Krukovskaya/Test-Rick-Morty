@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import '../Filters/Filters_btn.css';
 
 const Search = styled.div`
 position: absolute;
@@ -9,16 +10,11 @@ position: absolute;
   z-index: 2;
 .search_form {
   position: relative;
-  top: 320px;
-  right: 610px;
+  top: 95px;
+  right: 0;
   background-color: #0c0c0c1c;
-  max-width: 1140px;
-  width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  .search_label {
-    
-  } 
   .search_span {
   color: white;
   font-size: 18px;
@@ -56,7 +52,7 @@ position: absolute;
 
 }
 .search_btn {
-  background-color: #4285f4;
+  cursor: pointer;
   display: flex;
   position: relative;
   top: 6px;
@@ -181,7 +177,14 @@ const handleSearchGender = (event) => {
     </select>
     </label>
     </div>
-    <button className="search_btn" type="submit">Search</button>
+    <button className="btn-76 search_btn" type="submit">
+  Search
+  <span className="top"></span>
+  <span className="right"></span>
+  <span className="bottom"></span>
+  <span className="left"></span>
+</button>
+    {/* <button className="search_btn" type="submit">Search</button> */}
 </form>
 </Search>
 </>
