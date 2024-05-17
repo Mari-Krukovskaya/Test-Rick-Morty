@@ -15,7 +15,7 @@
   .page-item {
     margin: 0 5px;
   }
-  
+
   .page-link {
     display: inline-block;
     padding: 8px 12px;
@@ -28,10 +28,10 @@
   
   .page-link:hover {
     opacity: 0.8;
+    background-color: rgb(60 62 68);
   }
-  
-  .page-link.active {
-    background-color: white;
-    color: #fff;
-    border-color: #007bff;
+
+  .page-item.active .page-link,
+.page-item.active .page-link:focus {
+    background-color: rgb(60 62 68);
   }

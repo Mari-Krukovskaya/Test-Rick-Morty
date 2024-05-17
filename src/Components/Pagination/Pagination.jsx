@@ -2,7 +2,7 @@ import ReactPaginate from "react-paginate";
 import '../Pagination/Pagination.css';
 
 const Pagination = ({ pageNumber, info, updateNumber}) => {
-  let pageChange = (data) => {
+  const pageChange = (data) => {
     updateNumber(data.selected + 1);
   };
   return (
@@ -21,8 +21,6 @@ const Pagination = ({ pageNumber, info, updateNumber}) => {
   previousClassName= "btn btn-primary fs-5 prev"
   previousLinkClassName='page-link'
   nextLinkClassName='page-link'
-  
-
 />
 </>
   );
