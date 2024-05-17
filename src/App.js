@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // import './App.css';
 import styled from 'styled-components';
-import rick_morty from './image/rick_morty.png';
+import rick_morty from './image/rick_morty.webp';
 import Character from './Components/Character';
 import Filters from './Components/Filters/Filters';
 import Pagination from './Components/Pagination/Pagination';
